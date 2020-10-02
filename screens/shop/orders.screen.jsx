@@ -1,6 +1,10 @@
 import React from "react";
-import { FlatList, Text } from "react-native";
+import { FlatList, Text, Platform } from "react-native";
 import { useSelector } from "react-redux";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+
+import CustomHeaderButton from "../../components/UI/header-button.component";
+import OrderItem from "../../components/shop/order-item.component";
 
 export default function Orders() {
   const orders = useSelector((state) => state.orders.orders);
@@ -8,12 +12,19 @@ export default function Orders() {
   return (
     <FlatList
       data={orders}
-      renderItem={(dataItem) => <Text>{dataItem.item.id}</Text>}
+      renderItem={(dataItem) => (
+        <OrderItem
+          amount={dataItem.item.totalSum}
+          items={dataItem.item.items}
+          date={dataItem.item.readableDate}
+          toggleDetails={() => console.log("Toggle details")}
+        />
+      )}
     />
   );
 }
 
-Orders.navigationOptions = () => {
+Orders.navigationOptions = ({ navigation }) => {
   return {
     headerTitle: "My Orders",
     headerLeft: () => {

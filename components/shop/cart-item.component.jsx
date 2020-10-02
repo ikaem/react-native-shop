@@ -7,21 +7,26 @@ export default function CartItem(props) {
   return (
     <View style={styles.cartItem}>
       <View style={styles.cartItemData}>
-  <Text style={styles.cartItemQuantity}>{props.productQuantity}{" x "}</Text>
+        <Text style={styles.cartItemQuantity}>
+          {props.productQuantity}
+          {" x "}
+        </Text>
         <Text style={styles.cartItemTitle}>{props.productTitle}</Text>
       </View>
       <View style={styles.cartItemData}>
         <Text style={styles.cartItemAmount}>{props.productSum.toFixed(2)}</Text>
-        <TouchableOpacity
-          onPress={props.onRemove}
-          style={styles.cartItemDelete}
-        >
-          <Ionicons
-            name={Platform.OS === "android" ? "md-trash" : "ios-trash"}
-            size={23}
-            color="red"
-          />
-        </TouchableOpacity>
+        {props.onRemove && (
+          <TouchableOpacity
+            onPress={props.onRemove}
+            style={styles.cartItemDelete}
+          >
+            <Ionicons
+              name={Platform.OS === "android" ? "md-trash" : "ios-trash"}
+              size={23}
+              color="red"
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

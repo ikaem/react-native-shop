@@ -38,11 +38,19 @@ export default function ProductsOverview(props) {
   );
 }
 
-ProductsOverview.navigationOptions = ({navigation}) => {
+ProductsOverview.navigationOptions = ({ navigation }) => {
   return {
     headerTitle: "All Products",
     headerLeft: () => {
-      return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}><Item title="Menu" iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"} onPress={() => navigation.toggleDrawer()}/></HeaderButtons>
+      return (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            title="Menu"
+            iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"}
+            onPress={() => navigation.toggleDrawer()}
+          />
+        </HeaderButtons>
+      );
     },
     headerRight: () => {
       return (
@@ -50,9 +58,11 @@ ProductsOverview.navigationOptions = ({navigation}) => {
           <Item
             title="Cart"
             iconName={Platform.OS === "android" ? "md-cart" : "ios-cart"}
-            onPress={() => navigation.navigate({
-              routeName: "Cart"
-            })}
+            onPress={() =>
+              navigation.navigate({
+                routeName: "Cart",
+              })
+            }
           />
         </HeaderButtons>
       );
