@@ -1,13 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
-import { useSelector } from "react-redux";
+import { StyleSheet, FlatList, Platform } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import ProductItem from "../../components/shop/product-item.component";
+import CustomHeaderButton from "../../components/UI/header-button.component";
+
+import * as cartActions from "../../store/actions/cart.actions";
 
 export default function ProductsOverview(props) {
   const availableProducts = useSelector(
     (state) => state.products.availableProducts
   );
+  const dispatch = useDispatch();
 
   return (
     <FlatList
@@ -22,20 +27,36 @@ export default function ProductsOverview(props) {
               routeName: "ProductDetailed",
               params: {
                 productId: itemData.item.id,
-                productTitle: itemData.item.title
+                productTitle: itemData.item.title,
               },
             })
           }
-          onAddToCart={() => console.log("Add to Cart")}
+          onAddToCart={() => dispatch(cartActions.addToCart(itemData.item))}
         />
       )}
     />
   );
 }
 
-ProductsOverview.navigationOptions = () => {
+ProductsOverview.navigationOptions = ({navigation}) => {
   return {
     headerTitle: "All Products",
+    headerLeft: () => {
+      return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}><Item title="Menu" iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"} onPress={() => navigation.toggleDrawer()}/></HeaderButtons>
+    },
+    headerRight: () => {
+      return (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            title="Cart"
+            iconName={Platform.OS === "android" ? "md-cart" : "ios-cart"}
+            onPress={() => navigation.navigate({
+              routeName: "Cart"
+            })}
+          />
+        </HeaderButtons>
+      );
+    },
   };
 };
 
