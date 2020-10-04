@@ -95,6 +95,7 @@ export default function EditProduct(props) {
         {
           text: "Okay",
           style: "default",
+          onPress: () => setProductError(),
         },
       ]
     );

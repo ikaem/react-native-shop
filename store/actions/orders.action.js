@@ -4,10 +4,11 @@ export const ADD_ORDER = "ADD_ORDER";
 export const FETCH_ORDERS = "FETCH_ORDERS";
 
 export const fetchOrders = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { userId } = getState().auth
     try {
       const response = await fetch(
-        "https://react-native-shop-b010d.firebaseio.com/orders/u1.json"
+        `https://react-native-shop-b010d.firebaseio.com/orders/${userId}.json`
       );
 
       if (!response.ok) {
@@ -53,11 +54,12 @@ this.date = date;
 };
 
 export const addOrder = (cartItems, totalSum) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { token, userId } = getState().auth;
     try {
       const date = new Date();
       const response = await fetch(
-        `https://react-native-shop-b010d.firebaseio.com/orders/u1.json`,
+        `https://react-native-shop-b010d.firebaseio.com/orders/${userId}.json?auth=${token}`,
         {
           method: "post",
           headers: {

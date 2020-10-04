@@ -19,9 +19,9 @@ export default (state = initialState, action) => {
     case SET_PRODUCTS:
       return {
         ...state,
-        availableProducts: action.payload,
-        userProducts: action.payload.filter(
-          (product) => product.ownerId === "u1"
+        availableProducts: action.payload.products,
+        userProducts: action.payload.products.filter(
+          (product) => product.ownerId === action.payload.userId
         ),
       };
 
@@ -39,11 +39,19 @@ export default (state = initialState, action) => {
       };
 
     case CREATE_PRODUCT:
-      const { id, title, description, imageUrl, price } = action.payload;
+      const {
+        id,
+        title,
+        description,
+        imageUrl,
+        price,
+        ownerId,
+      } = action.payload;
       const newProduct = new Product(
         // new Date().toString(),
         id,
-        "u1",
+        // "u1",
+        ownerId,
         title,
         imageUrl,
         description,
