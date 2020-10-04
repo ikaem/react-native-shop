@@ -1,5 +1,13 @@
-import React from "react";
-import { StyleSheet, Text, View, FlatList, Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Button,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
 import CartItem from "../../components/shop/cart-item.component";
@@ -9,6 +17,9 @@ import * as cartActions from "../../store/actions/cart.actions";
 import * as ordersActions from "../../store/actions/orders.action";
 
 export default function Cart() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [createOrderError, setCreateOrderError] = useState();
+
   const cart = useSelector((state) => state.cart);
   const { items, totalSum } = cart;
 
@@ -29,20 +40,53 @@ export default function Cart() {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!createOrderError) return;
+
+    Alert.alert("Order error", "Unable to create error. Please try again", [
+      {
+        text: "Okay",
+        style: "default",
+        onPress: () => setCreateOrderError(),
+      },
+    ]);
+  }, [createOrderError]);
+
+  const createOrder = async () => {
+    setIsLoading(true);
+    setCreateOrderError(null);
+    try {
+      await dispatch(ordersActions.addOrder(transformedItems, totalSum));
+    } catch (error) {
+      console.log(error);
+      setCreateOrderError(error.message);
+    }
+    setIsLoading(false);
+  };
+
   return (
     <View style={styles.cart}>
       <View style={styles.cartSummary}>
         <Text style={styles.cartTotalSum}>
-          Total: <Text style={styles.amount}>${totalSum.toFixed(2)}</Text>
+          Total:{" "}
+          <Text style={styles.amount}>${Math.round(totalSum).toFixed(2)}</Text>
         </Text>
         <View style={styles.actionsContainer}>
-          <Button
-            title="Order now"
-            disabled={!transformedItems.length}
-            onPress={() => {
-              dispatch(ordersActions.addOrder(transformedItems, totalSum));
-            }}
-          />
+          {isLoading && (
+            <View style={styles.spinnerContainer}>
+              <ActivityIndicator size="small" color="purple" />
+            </View>
+          )}
+
+          {!isLoading && (
+            <Button
+              title="Order now"
+              disabled={!transformedItems.length}
+              onPress={() => {
+                createOrder();
+              }}
+            />
+          )}
         </View>
       </View>
       <FlatList
@@ -104,4 +148,5 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   cartItem: {},
+  spinnerContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
